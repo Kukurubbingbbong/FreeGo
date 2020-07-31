@@ -18,7 +18,7 @@ def runSpeechRecogizer():
                 "name" : "수박",
                 "storage" : 3,
                 "ex_date" : "2020-7-8"
-            },
+            },cccccccccccccccc
             {
                 "name" : "오이",
                 "storage" : 7,
