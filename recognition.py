@@ -20,7 +20,7 @@ def voice_recognize():
                        frames_per_buffer=CHUNK)
     while True:
         try:
-            print("recording... to record press s , to quit press q")
+            print("recording... to record press c , to quit press q")
             frames = []
             while True:
                 if keyboard.is_pressed('c'):
@@ -45,4 +45,3 @@ def voice_recognize():
             return r.recognize_google(audio, language='ko-KR')
         except Exception:
             return 'no input'
-        
