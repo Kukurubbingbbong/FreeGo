@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, Date
 from .db import Base
 
+
 class Food(Base):
     __tablename__ = 'Food'
 

@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import json
 import recognition
+import crawling
+import tts
 import orm.controller as controller
 import datetime
 
@@ -11,10 +13,21 @@ app = Flask(__name__)
 @app.route('/speech',methods=['GET'])
 def runSpeechRecogizer():
     msg = recognition.voice_recognize()
-
+    msg = msg = msg.replace(" ","")
     print("input message: [{}]".format(msg))
-    if "보여 줘" in msg:
+
+    if msg == "목록보여줘":
+        tts.speech("알겠습니다")
         result = controller.show_data()
+
+    elif "요리알려줘" in msg:
+        tts.speech("알겠습니다")
+        msg = msg.replace("요리알려줘","")
+        result = crawling.find_reciepe(msg)
+    else:
+        tts.speech("인식하지 못했습니다.")
+        result = "fail"
+
     return jsonify({"result": result})
 
 @app.route('/initdatabase', methods=['GET'])
@@ -23,7 +36,7 @@ def create_table():
     return jsonify({"result": result})
     
 
-@app.route('/show', methods=['GET','POST'])
+@app.route('/show', methods=['GET'])
 def showList():
     result = controller.show_data()
     return jsonify({"result": result})

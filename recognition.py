@@ -20,15 +20,16 @@ def voice_recognize():
                        frames_per_buffer=CHUNK)
     while True:
         try:
-            print("recording... to record press c , to quit press q")
+            print("recording................")
             frames = []
             while True:
-                if keyboard.is_pressed('c'):
+                if keyboard.is_pressed("s"):
                     data = stream.read(CHUNK)
                     frames.append(data)
-                if keyboard.is_pressed('q'):
+                if keyboard.is_pressed("q"):
                     break
-            print("finished recording")
+                        
+
             stream.stop_stream()
             stream.close()
             audio.terminate()
