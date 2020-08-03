@@ -1,9 +1,9 @@
 API 명세
 =
-데이터베이스 생성
+냉장고 등록
 -
 ``` 
-    GET /init
+    GET /register/<string:id>
 ```
 - Request
 ```
@@ -14,15 +14,15 @@ API 명세
 - Response
 ```
 {
-    SUCCESS { "code" : 200, "message": "success" }
-    FAIL { "code" : 404, "message" : "fail" }
+    SUCCESS { "code" : 200, "message": "register success" }
+    FAIL { "code" : 400, "message" : "fail" }
 }
 ```
 
 재료 목록 조회
 -
 ```
-    GET /show
+    GET /show/<string:id>
 ```
 - Request
 ```
@@ -33,9 +33,10 @@ API 명세
     SUCCESS { "code": 200,
             "data": [
                 {
-                "ex_date": "Mon, 31 Aug 2020 00:00:00 GMT",
-                "name": "가지",
-                "number": 4
+                    "id": "내 냉장고1",
+                    "ex_date": "Mon, 31 Aug 2020 00:00:00 GMT",
+                    "name": "가지",
+                    "number": 4
                 }, ...
             ],
             "message" : "success"
@@ -48,7 +49,7 @@ API 명세
 유통기한 지난 재료 조회
 -
 ```
-    GET /late
+    GET /late/<string:id>
 ```
 - Request
 ```
@@ -58,9 +59,10 @@ API 명세
     SUCCESS {"code": 200,
             "data": [
                 {
-                "ex_date": "Mon, 31 Aug 2020 00:00:00 GMT",
-                "name": "가지",
-                "number": 4
+                    "id" : "내 냉장고1",
+                    "ex_date" : "Mon, 31 Aug 2020 00:00:00 GMT",
+                    "name": "가지",
+                    "number" : 4
                 }, ...
             ],
             "message" : "success"
@@ -72,7 +74,7 @@ API 명세
 재료 추가
 -
 ```
-    POST /insert
+    POST /insert/<stirng:id>
 ```
 - Request
 ```
@@ -84,18 +86,17 @@ API 명세
 ```
 - Response
 ```
-    SUCCESS { "code": 200, "message": "success" }
+    SUCCESS { "code": 200, "message": "insert success" }
     FAIL { "code": 404, "message": "fail" }
     FAIL { "code": 404, "message": "already exist" }
 ```
 재료 수량 수정
 -
 ```
-    POST /update
+    POST /update/<string:id>
 ```
 - Request
 ```
-#재료 수량 수정
 {   
     "name" : "오이",
     "number" : 5
@@ -103,53 +104,19 @@ API 명세
 ```
 - Response
 ```
-    SUCCESS { "code": 200, "message": "success" }
+    SUCCESS { "code": 200, "message": "update success" }
     FAIL { "code": 404, "message": "fail" }
 ```
 재료 삭제
 -
 ```
-    GET /delete?name=value
+    GET /delete/<string:id>?name=value
 ```
 - Request
 ```
 ```
 - Response
 ```
-    SUCCESS { "code": 200, "message": "success" }
-    FAIL { "code": 404, "message": "fail" }
-```
-
-음성인식모드 실행
--
-```
-    GET /speech
-```
-- Request
-```
-```
-- Response
-```
-    SUCCESS { "code": 200,
-            "data": [
-                {
-                "ex_date": "Mon, 31 Aug 2020 00:00:00 GMT",
-                "name": "가지",
-                "number": 4
-                }, ...
-            ],
-            "message" : "success"
-    }
-
-    SUCCESS { "code": 200,
-            "data": {
-                "[요리제목0]" : "[레시피 설명 링크0]",
-                "[요리제목1]" : "[레시피 설명 링크1]",
-                "[요리제목2]" : "[레시피 설명 링크2]",
-                ...
-                },
-            "message" : "success"
-     }
-
+    SUCCESS { "code": 200, "message": "delete success" }
     FAIL { "code": 404, "message": "fail" }
 ```
