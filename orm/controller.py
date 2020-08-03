@@ -5,39 +5,50 @@ from datetime import datetime
 def create_table():
     try:
         init_db()
-        return 'success to create table'
+        return 'success'
     except Exception as err:
-        return "Error Log: [{}]".format(err)
+        print("Error Log: [{}]".format(err))
+        return 'fail'
 
 def show_data():
-    queries = db_session.query(Food)
-    entry = [dict(name=q.name, number=q.number, ex_date=q.ex_date) for q in queries]
-    return entry
+    try:
+        queries = db_session.query(Food)
+        entry = [dict(name=q.name, number=q.number, ex_date=q.ex_date) for q in queries]
+        return entry
+    except Exception as err:
+        print('Error Log: [{}]'.format(err))
+        return 'fail'
 
 def find_data(name):
     try:
         queries = db_session.query(Food).filter(Food.name == name)
         entry = [dict(name=q.name, number=q.number, ex_date=q.ex_date) for q in queries]
         if len(entry) == 0:
-            return True
-        return False
+            return False
+        return True
     except Exception as err:
-        return 'Error Log: [{}]'.format(err)
+        print('Error Log: [{}]'.format(err))
+        return 'fail'
 
 def find_lated():
-    today = datetime.today().strftime("%Y-%m-%d")
-    queries = db_session.query(Food).filter(Food.ex_date <= today)
-    entry = [dict(name=q.name, number=q.number, ex_date=q.ex_date) for q in queries]
-    return entry
+    try:
+        today = datetime.today().strftime("%Y-%m-%d")
+        queries = db_session.query(Food).filter(Food.ex_date <= today)
+        entry = [dict(name=q.name, number=q.number, ex_date=q.ex_date) for q in queries]
+        return entry
+    except Exception as err:
+        print('Error Log: [{}]'.format(err))
+        return 'fail'   
 
 def insert_data(name, number, ex_date):    
     try:
         f = Food(name = name, number = number, ex_date = ex_date)
         db_session.add(f)
         db_session.commit()
-        return 'add success'
+        return 'success'
     except Exception as err:
-        return 'Error Log: [{}]'.format(err)
+        print('Error Log: [{}]'.format(err))
+        return 'fail'
 
 def update_data(name, number):
     try:
@@ -46,7 +57,8 @@ def update_data(name, number):
         delete_data("check")
         return 'success'
     except Exception as err:
-        return "Error Log : [{}]".format(err)
+        print("Error Log : [{}]".format(err))
+        return 'fail'
 
 def delete_data(opt):
     try:        
@@ -55,7 +67,8 @@ def delete_data(opt):
         else:
             db_session.query(Food).filter(Food.name == opt).delete()
         db_session.commit()
-        return 
+        return 'success'
     except Exception as err:
-        return "Error Log: [{}]".format(err)
+        print("Error Log : [{}]".format(err))
+        return 'fail'
     

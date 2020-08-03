@@ -15,7 +15,7 @@ def runSpeechRecogizer():
     msg = recognition.voice_recognize()
     msg = msg = msg.replace(" ","")
     print("input message: [{}]".format(msg))
-
+    msg = "김치요리알려줘"
     if msg == "목록보여줘":
         tts.speech("알겠습니다")
         result = controller.show_data()
@@ -24,27 +24,50 @@ def runSpeechRecogizer():
         tts.speech("알겠습니다")
         msg = msg.replace("요리알려줘","")
         result = crawling.find_reciepe(msg)
+
     else:
         tts.speech("인식하지 못했습니다.")
-        result = "fail"
+        return jsonify({"code" : 404,
+                        "message": "fail"})
 
-    return jsonify({"result": result})
+    if result == 'fail':
+        return jsonify({"code" : 404,
+                        "message": "fail"})
 
-@app.route('/initdatabase', methods=['GET'])
+    return jsonify({"code" : 200,
+                    "message": "success",
+                    "data": result})
+
+@app.route('/init', methods=['GET'])
 def create_table():
     result = controller.create_table()
-    return jsonify({"result": result})
-    
+
+    if result == 'fail':
+        return jsonify({"code" : 404,
+                    "message": "fail"})
+
+    return jsonify({"code" : 200,
+                    "message": "success"})
 
 @app.route('/show', methods=['GET'])
-def showList():
+def show_entry():
     result = controller.show_data()
-    return jsonify({"result": result})
+
+    if result == 'fail':
+        return jsonify({"code":404,
+                        "message" : "fail"})
+
+    return jsonify({"code":200,
+                    "message": "success",
+                    "data": result})
 
 @app.route('/late', methods=['GET'])
-def showlated():
+def show_lated():
     result = controller.find_lated()
-    return jsonify({"result":result})
+
+    return jsonify({"code": 404,
+                    "message": "success",
+                    "data" : result})
 
 
 @app.route('/update', methods=['POST'])
@@ -55,22 +78,58 @@ def update_entry():
         number = data["number"]
         
         number = int(number)
+
         _existed = controller.find_data(name)
 
         if _existed:
-            ex_date = data["ex_date"]
-            ex_date = datetime.datetime.strptime(ex_date, "%Y%m%d").date()
-            
-            result = controller.insert_data(name, number, ex_date)
-        else:
             result = controller.update_data(name, number)
 
-        return jsonify({"result": result})
+        if result == 'fail':
+            return jsonify({"code": 404,
+                        "message": "fail"})
 
-@app.route('/delete', methods=['POST'])
+        return jsonify({"code": 200,
+                        "message": "success"})
+
+@app.route('/insert', methods=['POST'])
+def insert_entry():
+    if request.method == 'POST':
+        
+        data = data = request.get_json()
+        name = data["name"]
+
+        _existed = controller.find_data(name)
+        
+        if _existed:
+            number = data["number"]
+            ex_date = data["ex_date"]
+            
+            number = int(number)
+            ex_date = datetime.datetime.strptime(ex_date, "%Y%m%d").date()
+                
+            result = controller.insert_data(name, number, ex_date)
+
+            if result == 'fail':
+                return jsonify({"code": 404,
+                        "message": "fail"})
+            return jsonify({"code": 200,
+                            "message": "success"})
+        else:
+            return jsonify({"code": 404,
+                            "message": "already exist"})
+        
+
+@app.route('/delete', methods=['GET'])
 def delete_entry():
-    data = request.get_json()
-    controller.delete_data(data["name"])
+    data = request.args.get("name")
+    result = controller.delete_data(data)
+
+    if result == 'fail':
+        return jsonify({"code": 404,
+                        "message": "fail"})
+
+    return jsonify({"code": 200,
+                    "message":"success"})
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -43,6 +43,9 @@ def voice_recognize():
             harvard = sr.AudioFile('file.wav')
             with harvard as source:
                 audio = r.record(source)
+                
             return r.recognize_google(audio, language='ko-KR')
-        except Exception:
-            return 'no input'
+
+        except Exception as err:
+            print("Error Log : [{}]".format(err))   
+            return 'fail'
