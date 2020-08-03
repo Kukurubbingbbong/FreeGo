@@ -43,15 +43,29 @@ def create_table():
     result = controller.create_table()
 
     if result == 'fail':
-        return jsonify({"code" : 404,
+        return jsonify({"code" : 400,
                     "message": "fail"})
 
     return jsonify({"code" : 200,
                     "message": "success"})
 
+@app.route('/register', methods=['POST'])
+def register_entry():
+
+    data = request.get_json()
+    
+    result = controller.register_user(data['id'])
+    if result == 'fail':
+        return jsonify({"code": 400,
+                        "message":"fail"})
+    return jsonify({"code": 200,
+                    "message": "register success"})
+
 @app.route('/show', methods=['GET'])
 def show_entry():
-    result = controller.show_data()
+    data = request.get_json()
+    
+    result = controller.show_data(data['id'])
 
     if result == 'fail':
         return jsonify({"code":404,
@@ -61,29 +75,53 @@ def show_entry():
                     "message": "success",
                     "data": result})
 
-@app.route('/late', methods=['GET'])
-def show_lated():
-    result = controller.find_lated()
+@app.route('/find', methods=['POST'])
+def find_data():
+    
+    data = request.get_json()
+    id = data['id']
+    p_name = data['p_name']
+    
+    result = controller.find_data(id, p_name)
+    if result == 'fail':
+        return jsonify({"code":404,
+                        "message" : "fail"})
+    return jsonify({"code":200,
+                    "message": "success",
+                    "data": result})
 
-    return jsonify({"code": 404,
+
+@app.route('/late', methods=['POST'])
+def show_lated():
+    data = request.get_json()
+    result = controller.find_lated(data['id'])
+
+    if result == 'fail':
+        return jsonify({"code": 404,
                     "message": "success",
                     "data" : result})
-
+    return jsonify({"code": 200,
+                    "message": "success",
+                    "data": result})
+    
 
 @app.route('/update', methods=['POST'])
 def update_entry():
     if request.method == 'POST':
         data = request.get_json()
-        name = data["name"]
-        number = data["number"]
         
-        number = int(number)
-
-        _existed = controller.find_data(name)
+        id = data["id"]
+        p_name = data["p_name"]
+        p_number = data["p_number"]
+        
+        p_number = int(p_number)
+        _existed = controller.find_data(id, p_name)
 
         if _existed:
-            result = controller.update_data(name, number)
-
+            result = controller.update_data(p_name, p_number)
+        else:
+            return jsonify({"code": 404,
+                        "message": "fail"})
         if result == 'fail':
             return jsonify({"code": 404,
                         "message": "fail"})
@@ -96,6 +134,7 @@ def insert_entry():
     if request.method == 'POST':
         
         data = data = request.get_json()
+        id = data["id"]
         name = data["name"]
 
         _existed = controller.find_data(name)
@@ -118,11 +157,11 @@ def insert_entry():
             return jsonify({"code": 404,
                             "message": "already exist"})
         
-
-@app.route('/delete', methods=['GET'])
+# 재료 삭제
+@app.route('/delete', methods=['POST'])
 def delete_entry():
-    data = request.args.get("name")
-    result = controller.delete_data(data)
+    data = request.get_json()
+    result = controller.delete_data(data["id"], data["p_name"])
 
     if result == 'fail':
         return jsonify({"code": 404,
@@ -130,6 +169,8 @@ def delete_entry():
 
     return jsonify({"code": 200,
                     "message":"success"})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

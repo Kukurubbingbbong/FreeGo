@@ -49,3 +49,37 @@ def voice_recognize():
         except Exception as err:
             print("Error Log : [{}]".format(err))   
             return 'fail'
+
+# 음성인식모드 실행
+# -
+# ```
+#     GET /speech
+# ```
+# - Request
+# ```
+# ```
+# - Response
+# ```
+#     SUCCESS { "code": 200,
+#             "data": [
+#                 {
+#                 "ex_date": "Mon, 31 Aug 2020 00:00:00 GMT",
+#                 "name": "가지",
+#                 "number": 4
+#                 }, ...
+#             ],
+#             "message" : "success"
+#     }
+
+#     SUCCESS { "code": 200,
+#             "data": {
+#                 "[요리제목0]" : "[레시피 설명 링크0]",
+#                 "[요리제목1]" : "[레시피 설명 링크1]",
+#                 "[요리제목2]" : "[레시피 설명 링크2]",
+#                 ...
+#                 },
+#             "message" : "success"
+#      }
+
+#     FAIL { "code": 404, "message": "fail" }
+# ```

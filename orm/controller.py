@@ -1,5 +1,5 @@
 from .db import init_db, db_session
-from .models import Food
+from .models import USERS_TB, PRODUCT_TB
 from datetime import datetime
 
 def create_table():
@@ -10,19 +10,29 @@ def create_table():
         print("Error Log: [{}]".format(err))
         return 'fail'
 
-def show_data():
+def register_user(id):
     try:
-        queries = db_session.query(Food)
-        entry = [dict(name=q.name, number=q.number, ex_date=q.ex_date) for q in queries]
+        table = USERS_TB(id = id)
+        db_session.add(table)
+        db_session.commit()
+        return 'success'
+    except Exception as err:
+        print("Error Log: [{}]".format(err))
+        return 'fail'
+
+def show_data(id):
+    try:
+        queries = db_session.query(PRODUCT_TB).filter(PRODUCT_TB.id == id)
+        entry = [dict(id = q.id, p_name=q.p_name, number=q.p_number, ex_date=q.p_ex_date) for q in queries]
         return entry
     except Exception as err:
         print('Error Log: [{}]'.format(err))
         return 'fail'
 
-def find_data(name):
+def find_data(id, p_name):
     try:
-        queries = db_session.query(Food).filter(Food.name == name)
-        entry = [dict(name=q.name, number=q.number, ex_date=q.ex_date) for q in queries]
+        queries = db_session.query(PRODUCT_TB).filter(PRODUCT_TB.id == id && PRODUCT_TB.p_name == p_name)
+        entry = [dict(id=q.id, p_name=q.p_name, p_number=q.p_number, p_ex_date=q.p_ex_date) for q in queries]
         if len(entry) == 0:
             return False
         return True
@@ -30,19 +40,19 @@ def find_data(name):
         print('Error Log: [{}]'.format(err))
         return 'fail'
 
-def find_lated():
+def find_lated(id):
     try:
         today = datetime.today().strftime("%Y-%m-%d")
-        queries = db_session.query(Food).filter(Food.ex_date <= today)
-        entry = [dict(name=q.name, number=q.number, ex_date=q.ex_date) for q in queries]
+        queries = db_session.query(PRODUCT_TB).filter(PRODUCT_TB.id == id && PRODUCT_TB.p_ex_date <= today)
+        entry = [dict(id=q.id, p_name=q.p_name, number=q.number, ex_date=q.ex_date) for q in queries]
         return entry
     except Exception as err:
         print('Error Log: [{}]'.format(err))
         return 'fail'   
 
-def insert_data(name, number, ex_date):    
+def insert_data(id, p_name, p_number, p_ex_date):    
     try:
-        f = Food(name = name, number = number, ex_date = ex_date)
+        f = PRODUCT_TB(id = id, p_name = p_name, p_number = p_number, p_ex_date = p_ex_date)
         db_session.add(f)
         db_session.commit()
         return 'success'
@@ -50,22 +60,22 @@ def insert_data(name, number, ex_date):
         print('Error Log: [{}]'.format(err))
         return 'fail'
 
-def update_data(name, number):
+def update_data(id, p_name, p_number):
     try:
-        db_session.query(Food).filter(Food.name == name).update({Food.number : Food.number + number})
+        db_session.query(PRODUCT_TB).filter(PRODUCT_TB.id == id && PRODUCT_TB.p_name == p_name).update({PRODUCT_TB.p_number : p_number})
         db_session.commit()
-        delete_data("check")
+        delete_data(id, "check")
         return 'success'
     except Exception as err:
         print("Error Log : [{}]".format(err))
         return 'fail'
 
-def delete_data(opt):
+def delete_data(id, opt):
     try:        
         if opt == "check":
-            db_session.query(Food).filter(Food.number == 0).delete()
+            db_session.query(PRODUCT_TB).filter(PRODUCT_TB.number == 0).delete()
         else:
-            db_session.query(Food).filter(Food.name == opt).delete()
+            update_data(id, opt, 0)            
         db_session.commit()
         return 'success'
     except Exception as err:

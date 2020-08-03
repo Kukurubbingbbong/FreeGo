@@ -1,14 +1,29 @@
 API 명세
 =
+초기 테이블 생성
+-
+``` 
+    GET /init
+```
+- Request
+```
+```
+- Response
+```
+{
+    SUCCESS { "code" : 200, "message": "init success" }
+    FAIL { "code" : 400, "message" : "fail" }
+}
+```
 냉장고 등록
 -
 ``` 
-    GET /register/<string:id>
+    POST /register
 ```
 - Request
 ```
 {
-
+    "id" : "내 냉장고1"
 }
 ```
 - Response
@@ -22,11 +37,13 @@ API 명세
 재료 목록 조회
 -
 ```
-    GET /show/<string:id>
+    POST /show
 ```
 - Request
 ```
-
+{
+    "id": "내 냉장고1"
+}
 ```
 - Response
 ```
@@ -34,25 +51,46 @@ API 명세
             "data": [
                 {
                     "id": "내 냉장고1",
-                    "ex_date": "Mon, 31 Aug 2020 00:00:00 GMT",
-                    "name": "가지",
-                    "number": 4
+                    "p_ex_date": "Mon, 31 Aug 2020 00:00:00 GMT",
+                    "p_name": "가지",
+                    "p_number": 4
                 }, ...
             ],
-            "message" : "success"
+            "message" : "select success"
     }
 
     FAIL { "code" : 404, "message" : "fail" }
 ```
-
+재료 존재여부 확인
+-
+``` 
+    POST /find
+```
+- Request
+```
+{
+    "id" : "내 냉장고1",
+    "p_name" : "동원참치"
+}
+```
+- Response
+```
+{
+    SUCCESS { "code" : 200, "message": "find success" }
+    FAIL { "code" : 400, "message" : "fail" }
+}
+```
 
 유통기한 지난 재료 조회
 -
 ```
-    GET /late/<string:id>
+    POST /late
 ```
 - Request
 ```
+{
+    "id" : "내 냉장고1"
+}
 ```
 - Response
 ```
@@ -60,12 +98,12 @@ API 명세
             "data": [
                 {
                     "id" : "내 냉장고1",
-                    "ex_date" : "Mon, 31 Aug 2020 00:00:00 GMT",
-                    "name": "가지",
-                    "number" : 4
+                    "p_ex_date" : "Mon, 31 Aug 2020 00:00:00 GMT",
+                    "p_name": "가지",
+                    "p_number" : 4
                 }, ...
             ],
-            "message" : "success"
+            "message" : "select success"
     }
 
     FAIL { "code" : 404, "message" : "fail" }
@@ -74,14 +112,15 @@ API 명세
 재료 추가
 -
 ```
-    POST /insert/<stirng:id>
+    POST /insert
 ```
 - Request
 ```
 {
-    "name" : "가지",
-    "number" : 3, #양수
-    "ex_date" : 20230807
+    "id" : "내 냉장고1",
+    "p_name" : "가지",
+    "p_number" : 3, #양수
+    "p_ex_date" : 20230807
 }
 ```
 - Response
@@ -93,13 +132,14 @@ API 명세
 재료 수량 수정
 -
 ```
-    POST /update/<string:id>
+    POST /update
 ```
 - Request
 ```
-{   
-    "name" : "오이",
-    "number" : 5
+{
+    "id" : "내 냉장고1",
+    "p_name" : "오이",
+    "p_number" : 5
 }
 ```
 - Response
@@ -110,10 +150,14 @@ API 명세
 재료 삭제
 -
 ```
-    GET /delete/<string:id>?name=value
+    POST /delete
 ```
 - Request
 ```
+{
+    "id" : "내 냉장고1",
+    "p_name" : "동원참치"
+}
 ```
 - Response
 ```
