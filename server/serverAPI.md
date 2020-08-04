@@ -15,24 +15,6 @@ API 명세
     FAIL { "code" : 400, "message" : "fail" }
 }
 ```
-냉장고 등록
--
-``` 
-    POST /register
-```
-- Request
-```
-{
-    "id" : "내 냉장고1"
-}
-```
-- Response
-```
-{
-    SUCCESS { "code" : 200, "message": "register success" }
-    FAIL { "code" : 400, "message" : "fail" }
-}
-```
 
 재료 목록 조회
 -
