@@ -1,42 +1,12 @@
 from flask import Flask, request, jsonify
 import json
-import recognition
-import crawling
-import tts
-import orm.controller as controller
 import datetime
+import orm.controller as controller
+
 
 
 app = Flask(__name__)
 
-
-@app.route('/speech',methods=['GET'])
-def runSpeechRecogizer():
-    msg = recognition.voice_recognize()
-    msg = msg = msg.replace(" ","")
-    print("input message: [{}]".format(msg))
-    msg = "김치요리알려줘"
-    if msg == "목록보여줘":
-        tts.speech("알겠습니다")
-        result = controller.show_data()
-
-    elif "요리알려줘" in msg:
-        tts.speech("알겠습니다")
-        msg = msg.replace("요리알려줘","")
-        result = crawling.find_reciepe(msg)
-
-    else:
-        tts.speech("인식하지 못했습니다.")
-        return jsonify({"code" : 404,
-                        "message": "fail"})
-
-    if result == 'fail':
-        return jsonify({"code" : 404,
-                        "message": "fail"})
-
-    return jsonify({"code" : 200,
-                    "message": "success",
-                    "data": result})
 
 @app.route('/init', methods=['GET'])
 def create_table():
@@ -49,19 +19,19 @@ def create_table():
     return jsonify({"code" : 200,
                     "message": "success"})
 
-@app.route('/register', methods=['POST'])
-def register_entry():
+# @app.route('/register', methods=['POST'])
+# def register_entry():
 
-    data = request.get_json()
+#     data = request.get_json()
     
-    result = controller.register_user(data['id'])
-    if result == 'fail':
-        return jsonify({"code": 400,
-                        "message":"fail"})
-    return jsonify({"code": 200,
-                    "message": "register success"})
+#     result = controller.register_user(data['id'])
+#     if result == 'fail':
+#         return jsonify({"code": 400,
+#                         "message":"fail"})
+#     return jsonify({"code": 200,
+#                     "message": "register success"})
 
-@app.route('/show', methods=['GET'])
+@app.route('/show', methods=['POST'])
 def show_entry():
     data = request.get_json()
     
@@ -95,11 +65,12 @@ def find_data():
 def show_lated():
     data = request.get_json()
     result = controller.find_lated(data['id'])
-
-    if result == 'fail':
-        return jsonify({"code": 404,
-                    "message": "success",
-                    "data" : result})
+    if len(result) == 0:
+        return jsonify({"code": 200,
+                    "message": "no lated data"})
+    elif result == 'fail':
+        return jsonify({"code":404,
+                        "message" : "fail"})
     return jsonify({"code": 200,
                     "message": "success",
                     "data": result})
@@ -118,7 +89,7 @@ def update_entry():
         _existed = controller.find_data(id, p_name)
 
         if _existed:
-            result = controller.update_data(p_name, p_number)
+            result = controller.update_data(id, p_name, p_number)
         else:
             return jsonify({"code": 404,
                         "message": "fail"})
@@ -135,18 +106,18 @@ def insert_entry():
         
         data = data = request.get_json()
         id = data["id"]
-        name = data["name"]
+        p_name = data["p_name"]
 
-        _existed = controller.find_data(name)
+        _existed = controller.find_data(id, p_name)
         
-        if _existed:
-            number = data["number"]
-            ex_date = data["ex_date"]
+        if not _existed:
+            p_number = data["p_number"]
+            p_ex_date = data["p_ex_date"]
             
-            number = int(number)
-            ex_date = datetime.datetime.strptime(ex_date, "%Y%m%d").date()
+            p_number = int(p_number)
+            p_ex_date = datetime.datetime.strptime(str(p_ex_date), "%Y-%m-%d").date()
                 
-            result = controller.insert_data(name, number, ex_date)
+            result = controller.insert_data(id , p_name, p_number, str(p_ex_date))
 
             if result == 'fail':
                 return jsonify({"code": 404,

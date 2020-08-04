@@ -1,7 +1,7 @@
 db = {
     'user'     : 'root',		# 1)
-    'password' : 'woung',		# 2)
-    'host'     : 'localhost',	# 3)
+    'password' : 'woungsub',		# 2)
+    'host'     : '127.0.0.1',	# 3)
     'port'     : 3306,			# 4)
     'database' : 'freego'		# 5)
 }

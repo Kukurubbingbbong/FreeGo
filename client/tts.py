@@ -1,5 +1,3 @@
-from gtts import gTTS
-from playsound import playsound
 import pyttsx3
 def speech(text):
     try:
